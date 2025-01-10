@@ -9,6 +9,11 @@ sudo apt-get install -y python3.9 python3.9-distutils
 
 # Install Cloudant
 /usr/bin/python3.9 -m pip install Cloudant
+/usr/bin/python3.9 -m pip install ibmcloudant
+/usr/bin/python3.9 -m pip install ibm-cloud-sdk-core
+
+# Install dotenv
+/usr/bin/python3.9 -m pip install python-dotenv
 
 # Install Flask
 /usr/bin/python3.9 -m pip install Flask

@@ -1,0 +1,4 @@
+get_dealership =https://betse53-3000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/dealerships/get
+reviews=https://betse53-5000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/api/get_reviews?id=15
+github_repo=https://github.com/Betsegaw-hp/agfzb-CloudAppDevelopment_Capstone
+django=https://betse53-8000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/djangoapp/
