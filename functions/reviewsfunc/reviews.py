@@ -5,7 +5,7 @@ import atexit
 import os
 from dotenv import load_dotenv
 from pathlib import Path
-
+load_dotenv()
 #Add your Cloudant service credentials here
 cloudant_username = os.getenv('CLOUDANT_USERNAME')
 cloudant_api_key = os.getenv('IAM_API_KEY')
