@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-# from .models import related models
-# from .restapis import related methods
+from .models import *
+from .restapis import get_dealers_from_cf, get_dealer_by_id_from_cf, get_dealer_reviews_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -89,14 +89,34 @@ def registration_request(request):
 def get_dealerships(request):
     context = {}
     if request.method == "GET":
-        return render(request, 'djangoapp/index.html', context)
+        url = "https://betse53-3000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/dealerships/get"
+        dealerships = get_dealers_from_cf(url)
+        # dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        context['dealerships'] = dealerships
+        return render(request,'djangoapp/index.html' ,context)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    context = {}
+    if request.method == "GET":
+        url = "https://betse53-5000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/api/get_reviews"
+        dealerships = get_dealer_reviews_from_cf(url, dealer_id=dealer_id)
+        context['dealer_details'] = dealerships
+        return render(request,'djangoapp/dealer_details.html' ,context)
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
-
+def add_review(request, dealer_id):
+    context = {}
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            review = {}
+            review["time"] = datetime.utcnow().isoformat()
+            review["dealership"] = dealer_id
+            review["review"] = request.POST['review']
+            review[""] = request.POST['review']
+            return redirect('djangoapp:index')
+        else:
+            return render(request, 'djangoapp/login.html', context)
+    else: 
+        return redirect('djangoapp:index')

@@ -1,0 +1,51 @@
+/* Global Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Navbar Customization */
+.navbar {
+    background-color: #0d6efd !important;
+}
+
+.navbar-brand, .nav-link, .dropbtn {
+    color: #fff !important;
+    font-weight: 500;
+}
+
+.navbar-brand:hover, .nav-link:hover {
+    color: #e2e6ea !important;
+}
+
+/* Dropdown Button */
+.dropbtn {
+    background-color: transparent;
+    border: none;
+    font-weight: 500;
+}
+
+.dropdown-content a {
+    color: #212529;
+}
+
+/* Table Enhancements */
+table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #e2e6ea;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Buttons */
+.btn-outline-success {
+    border-radius: 20px;
+}

@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const Cloudant = require('@cloudant/cloudant');
 
+require('dotenv').config()
 // Initialize Cloudant connection with IAM authentication
 async function dbCloudantConnect() {
     try {

@@ -3,16 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <title>Dealership Review</title>
-    {% load static %}
+     {% load static %}
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 
     <body>
+<!-- Modern Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">🚗 Dealership Review</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <!--Add a nav bar here -->
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Contact</a>
+                </li>
+            </ul>
 
-    <!-- Add reviews as cards -->
-
+            <!-- Conditional Authentication -->
+            {% if user.is_authenticated %}
+            <div class="dropdown">
+                <button class="dropbtn dropdown-toggle" data-bs-toggle="dropdown">
+                    {{ user.first_name }} / {{ user.username }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{% url 'djangoapp:logout' %}">Logout</a></li>
+                </ul>
+            </div>
+            {% else %}
+            <form class="d-flex" action="{% url 'djangoapp:login' %}" method="post">
+                {% csrf_token %}
+                <input class="form-control me-2" type="text" placeholder="Username" name="username">
+                <input class="form-control me-2" type="password" placeholder="Password" name="psw">
+                <button class="btn btn-light" type="submit">Login</button>
+            </form>
+            <a class="btn btn-outline-light ms-2" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+<!-- Add reviews as cards -->
+<!-- Reviews Section -->
+<div class="container my-5">
+    <h2 class="text-center mb-4">Reviews</h2>
+    <div class="row justify-content-center">
+      {% if dealer_details %}
+        {% for review in dealer_details %}
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card review-card shadow-sm">
+              <div class="card-header d-flex align-items-center">
+                <img src="https://via.placeholder.com/50" alt="User Avatar" class="avatar me-3">
+                <div>
+                  <h6 class="mb-0">{{ review.name }}</h6>
+                  <small class="text-muted">{{ review.car_make }} {{ review.car_model }} ({{ review.car_year }})</small>
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="review-text">"{{ review.review }}"</p>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item"><strong>Dealership ID:</strong> {{ review.dealership }}</li>
+                  <li class="list-group-item"><strong>Purchased:</strong> {{ review.purchase|yesno:"Yes,No" }}</li>
+                  {% if review.purchase %}
+                    <li class="list-group-item"><strong>Purchase Date:</strong> {{ review.purchase_date }}</li>
+                  {% endif %}
+                  <li class="list-group-item"><strong>Sentiment:</strong> {{ review.sentiment }}</li>
+                </ul>
+              </div>
+              <div class="card-footer text-end">
+                <button class="btn btn-outline-success btn-sm">Helpful</button>
+                <button class="btn btn-outline-danger btn-sm">Report</button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-center">No reviews available.</p>
+      {% endif %}
+    </div>
+  </div>
+  
+  
+            
     </body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </html>
