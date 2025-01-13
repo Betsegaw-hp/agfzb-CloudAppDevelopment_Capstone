@@ -117,7 +117,6 @@ def add_review(request, dealer_id):
         if request.user.is_authenticated:
             car_id = request.POST.get("car")
             car = CarModel.objects.get(id=car_id)
-            print(dealer_id, request.user.first_name)
             review = {
                 "id": random.randint(1, 10000),
                 "time": datetime.utcnow().isoformat(),
