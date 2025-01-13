@@ -117,6 +117,7 @@ def add_review(request, dealer_id):
         if request.user.is_authenticated:
             car_id = request.POST.get("car")
             car = CarModel.objects.get(id=car_id)
+            print(dealer_id, request.user.first_name)
             review = {
                 "id": random.randint(1, 10000),
                 "time": datetime.utcnow().isoformat(),
@@ -130,7 +131,6 @@ def add_review(request, dealer_id):
                 "car_model": car.name,
                 "car_year": car.year.strftime("%Y") 
             }
-            print(review)
             url = "{}/api/post_review".format(os.getenv("REVIEW_URL"))
             try:
                 res = post_request(url, json_payload=review, dealerId=dealer_id)

@@ -80,7 +80,7 @@ def get_dealers_from_cf(url, **kwargs):
 
 def get_dealer_by_id_from_cf(url,dealer_id,  **kwargs):
     result = {}
-    json_result = get_request(url, dealer_id=dealer_id)
+    json_result = get_request(url, id=dealer_id)
     if json_result:
         dealer_doc = json_result[0]
         dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"], full_name=dealer_doc["full_name"],
@@ -109,23 +109,28 @@ def get_dealer_reviews_from_cf(url,dealer_id,  **kwargs):
     return results
 
 def analyze_review_sentiments(text):
-    if len(text) < 20:
-        text += " "
     authenticator = IAMAuthenticator(os.getenv('IBM_NLU_API_KEY'))
     natural_language_understanding = NaturalLanguageUnderstandingV1(
         version='2022-04-07',
-        authenticator=authenticator)
+        authenticator=authenticator
+    )
 
     natural_language_understanding.set_service_url(os.getenv('IBM_NLU_URL'))
 
     response = natural_language_understanding.analyze(
         text=text,
-        language="en", 
+        language="en",
         features=Features(
             entities=EntitiesOptions(emotion=True, sentiment=True, limit=2),
-            keywords=KeywordsOptions(emotion=True, sentiment=True,
-                                    limit=2))).get_result()
+            keywords=KeywordsOptions(emotion=True, sentiment=True, limit=2)
+        )
+    ).get_result()
 
-    # print(json.dumps(response, indent=2)) 
-    label = response.get("keywords", [{}])[0].get("sentiment", {}).get("label", "neutral")
+    # Safely access the sentiment label
+    keywords = response.get("keywords", [])
+    if keywords:
+        label = keywords[0].get("sentiment", {}).get("label", "neutral")
+    else:
+        label = "neutral"  # Default if no keywords are found
+
     return label
