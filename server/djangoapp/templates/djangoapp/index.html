@@ -11,6 +11,19 @@
     
     <!-- Google Fonts for Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Bootstrap Table CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.20.2/dist/bootstrap-table.min.css">
+
+    <!-- Bootstrap Table JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.20.2/dist/bootstrap-table.min.js"></script>
+
+    <!-- Bootstrap Table Filter Extension -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.20.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
     <link />
     <style>
         /* Responsive Dealer Section */
@@ -72,14 +85,16 @@
 <!-- Dealers Table -->
 <div class="container my-5 dealer-container">
     <h3 class="text-center mb-4">🚙 Available Dealers</h3>
-    <table class="table table-striped table-hover">
+    <table id="table" class="table table-striped table-hover" data-filter-control="true">
         <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Full Name</th>
+                <th scope="col">Dealer Name</th>
                 <th scope="col">City</th>
-                <th scope="col">State (Short)</th>
-                <th scope="col">Address (Long, Lat)</th>
+                <th scope="col">Address</th>
+                <th scope="col" data-field="state" data-filter-control="select">
+                    State
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -87,10 +102,10 @@
                 {% for dealer in dealerships %}
                 <tr>
                     <th scope="row">{{ dealer.id }}</th>
-                    <td>{{ dealer.full_name }}</td>
+                    <td><a href="{% url 'djangoapp:dealer_details' dealer.id %}">{{dealer.full_name}}</a></td>
                     <td>{{ dealer.city }}</td>
+                    <td>{{ dealer.address }}</td>
                     <td>{{ dealer.state }} | {{ dealer.st }}</td>
-                    <td>{{ dealer.long }}, {{ dealer.lat }}</td>
                 </tr>
                 {% endfor %}
             {% else %}
@@ -104,6 +119,10 @@
 
 <!-- Bootstrap 5 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script>
+    $(function() {
+      $('#table').bootstrapTable()
+    })
+</script>
 </body>
 </html>

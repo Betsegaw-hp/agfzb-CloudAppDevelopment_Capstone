@@ -82,7 +82,7 @@ def get_dealer_by_id_from_cf(url,dealer_id,  **kwargs):
     result = {}
     json_result = get_request(url, dealer_id=dealer_id)
     if json_result:
-        dealer_doc = json_result
+        dealer_doc = json_result[0]
         dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"], full_name=dealer_doc["full_name"],
                                 id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
                                 short_name=dealer_doc["short_name"], state=dealer_doc["state"],
@@ -127,4 +127,5 @@ def analyze_review_sentiments(text):
                                     limit=2))).get_result()
 
     # print(json.dumps(response, indent=2)) 
-    return response["keywords"][0]["sentiment"]["label"]
+    label = response.get("keywords", [{}])[0].get("sentiment", {}).get("label", "neutral")
+    return label

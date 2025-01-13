@@ -57,31 +57,28 @@
 <div class="container my-5">
     <h2 class="text-center mb-4">Reviews</h2>
     <div class="row justify-content-center">
-      {% if dealer_details %}
+        {% if dealer_details %}
         {% for review in dealer_details %}
           <div class="col-md-6 col-lg-4 mb-4">
             <div class="card review-card shadow-sm">
               <div class="card-header d-flex align-items-center">
-                <img src="https://via.placeholder.com/50" alt="User Avatar" class="avatar me-3">
+                <!-- Sentiment Emoji -->
+                {% if review.sentiment == 'positive' %}
+                  <img src="{{ MEDIA_URL }}emoji/positive.png" alt="Positive" class="emoji me-2">
+                {% elif review.sentiment == 'neutral' %}
+                  <img src="{{ MEDIA_URL }}emoji/neutral.png" alt="Neutral" class="emoji me-2">
+                {% else %}
+                  <img src="{{ MEDIA_URL }}emoji/negative.png" alt="Negative" class="emoji me-2">
+                {% endif %}
+                
                 <div>
-                  <h6 class="mb-0">{{ review.name }}</h6>
-                  <small class="text-muted">{{ review.car_make }} {{ review.car_model }} ({{ review.car_year }})</small>
+                  <h6 class="mb-0">{{ review.car_make }}, {{ review.car_model }}</h6>
+                  <small class="text-muted">{{ review.car_year }}</small>
                 </div>
               </div>
+              
               <div class="card-body">
-                <p class="review-text">"{{ review.review }}"</p>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item"><strong>Dealership ID:</strong> {{ review.dealership }}</li>
-                  <li class="list-group-item"><strong>Purchased:</strong> {{ review.purchase|yesno:"Yes,No" }}</li>
-                  {% if review.purchase %}
-                    <li class="list-group-item"><strong>Purchase Date:</strong> {{ review.purchase_date }}</li>
-                  {% endif %}
-                  <li class="list-group-item"><strong>Sentiment:</strong> {{ review.sentiment }}</li>
-                </ul>
-              </div>
-              <div class="card-footer text-end">
-                <button class="btn btn-outline-success btn-sm">Helpful</button>
-                <button class="btn btn-outline-danger btn-sm">Report</button>
+                <p class="review-text">{{ review.review }}</p>
               </div>
             </div>
           </div>
@@ -89,6 +86,7 @@
       {% else %}
         <p class="text-center">No reviews available.</p>
       {% endif %}
+      
     </div>
   </div>
   

@@ -7,10 +7,11 @@ from .restapis import get_dealers_from_cf, get_dealer_by_id_from_cf, get_dealer_
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
+from dotenv import load_dotenv
 import logging
 import json
 import os
-from dotenv import load_dotenv
+import random
 load_dotenv()
 
 # Get an instance of a logger
@@ -114,17 +115,20 @@ def add_review(request, dealer_id):
     context = {}
     if request.method == "POST":
         if request.user.is_authenticated:
+            car_id = request.POST.get("car")
+            car = CarModel.objects.get(id=car_id)
             review = {
-                "id": 1,
+                "id": random.randint(1, 10000),
+                "time": datetime.utcnow().isoformat(),
                 "dealership": dealer_id,
                 "review": request.POST.get('review', ''),
-                "name": request.POST.get('name', ''),
+                "name": request.user.username,
                 "dealership": dealer_id,
-                "purchase": request.POST.get('purchase', ''),
+                "purchase": True if request.POST.get('purchase', '')== 'on' else False,
                 "purchase_date": request.POST.get('purchase_date', ''),
-                "car_make": request.POST.get('car_make', ''),
-                "car_model": request.POST.get('car_model', ''),
-                "car_year": request.POST.get('car_year', '')
+                "car_make": car.make.name,
+                "car_model": car.name,
+                "car_year": car.year.strftime("%Y") 
             }
             print(review)
             url = "{}/api/post_review".format(os.getenv("REVIEW_URL"))
@@ -138,5 +142,7 @@ def add_review(request, dealer_id):
         else:
             return render(request, 'djangoapp/login.html', context)
     else:
-        context["dealer_id"] = dealer_id
+        url = "{}/dealerships/get".format(os.getenv("DEALERSHIP_URL"))
+        context["dealer"] = get_dealer_by_id_from_cf(url, dealer_id=dealer_id)
+        context["cars"] = CarModel.objects.all()
         return render(request, 'djangoapp/add_review.html', context)
