@@ -3,12 +3,15 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import *
-from .restapis import get_dealers_from_cf, get_dealer_by_id_from_cf, get_dealer_reviews_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_by_id_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -89,7 +92,7 @@ def registration_request(request):
 def get_dealerships(request):
     context = {}
     if request.method == "GET":
-        url = "https://betse53-3000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/dealerships/get"
+        url = "{}/dealerships/get".format(os.getenv("DEALERSHIP_URL"))
         dealerships = get_dealers_from_cf(url)
         # dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
         context['dealerships'] = dealerships
@@ -100,7 +103,7 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
     context = {}
     if request.method == "GET":
-        url = "https://betse53-5000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/api/get_reviews"
+        url = "{}/api/get_reviews".format(os.getenv("REVIEW_URL"))
         dealerships = get_dealer_reviews_from_cf(url, dealer_id=dealer_id)
         context['dealer_details'] = dealerships
         return render(request,'djangoapp/dealer_details.html' ,context)
@@ -111,13 +114,29 @@ def add_review(request, dealer_id):
     context = {}
     if request.method == "POST":
         if request.user.is_authenticated:
-            review = {}
-            review["time"] = datetime.utcnow().isoformat()
-            review["dealership"] = dealer_id
-            review["review"] = request.POST['review']
-            review[""] = request.POST['review']
-            return redirect('djangoapp:index')
+            review = {
+                "id": 1,
+                "dealership": dealer_id,
+                "review": request.POST.get('review', ''),
+                "name": request.POST.get('name', ''),
+                "dealership": dealer_id,
+                "purchase": request.POST.get('purchase', ''),
+                "purchase_date": request.POST.get('purchase_date', ''),
+                "car_make": request.POST.get('car_make', ''),
+                "car_model": request.POST.get('car_model', ''),
+                "car_year": request.POST.get('car_year', '')
+            }
+            print(review)
+            url = "{}/api/post_review".format(os.getenv("REVIEW_URL"))
+            try:
+                res = post_request(url, json_payload=review, dealerId=dealer_id)
+                print(res)
+                return HttpResponse(res) 
+            except:
+                print("Error occured.")
+                return HttpResponse("Unexpected Error occured.") 
         else:
             return render(request, 'djangoapp/login.html', context)
     else:
+        context["dealer_id"] = dealer_id
         return render(request, 'djangoapp/add_review.html', context)
